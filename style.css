@@ -1,0 +1,547 @@
+/* ═══════════════════════════════════════════════════════════════
+   JATS Academic Journal PDF — CSS Paged Media Stylesheet
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Page Setup ──────────────────────────────────────────────── */
+@page {
+    size: A4;
+    margin: 2cm 1.8cm 2.2cm 1.8cm;
+
+    @top-left {
+        content: string(journal-abbrev);
+        font-size: 8pt;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+    }
+    @top-right {
+        content: string(article-title-short);
+        font-size: 8pt;
+        font-family: "Times New Roman", serif;
+    }
+    @bottom-center {
+        content: counter(page);
+        font-size: 9pt;
+        font-family: "Times New Roman", serif;
+    }
+}
+
+@page :first {
+    @top-left {
+        content: none;
+    }
+    @top-right {
+        content: none;
+    }
+}
+
+/* ─── Base Typography ─────────────────────────────────────────── */
+body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 9pt;
+    line-height: 1.55;
+    color: #111;
+    text-align: justify;
+    hyphens: auto;
+    counter-reset: footnote;
+}
+
+/* ─── Front Matter (single column, full width) ────────────────── */
+.article-front {
+    column-span: all;
+    margin-bottom: 1.5em;
+}
+
+.journal-meta {
+    text-align: left;
+    margin-bottom: 0.8em;
+}
+
+.journal-citation {
+    font-size: 9pt;
+    font-weight: bold;
+    margin: 0;
+    text-indent: 0;
+    line-height: 1.4;
+}
+
+.journal-citation .doi {
+    font-weight: normal;
+    font-size: 7.5pt;
+    color: #555;
+    word-break: break-all;
+}
+
+.article-type {
+    font-size: 8pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0.3em 0;
+    text-indent: 0;
+}
+
+/* Title */
+.article-title {
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: left;
+    margin: 0.5em 0;
+    line-height: 1.25;
+}
+
+/* Authors */
+.authors {
+    font-size: 10pt;
+    margin-bottom: 0.5em;
+    line-height: 1.4;
+}
+
+.author {
+    white-space: nowrap;
+}
+
+/* Affiliations */
+.affiliations {
+    font-size: 7.5pt;
+    margin-bottom: 0.3em;
+    line-height: 1.35;
+}
+
+.aff {
+    margin: 0.1em 0;
+    text-indent: 0;
+}
+
+/* Correspondence */
+.correspondence {
+    font-size: 7.5pt;
+    margin-bottom: 0.3em;
+}
+
+.correspondence p {
+    margin: 0.1em 0;
+    text-indent: 0;
+}
+
+.correspondence a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.author-footnotes {
+    font-size: 7.5pt;
+    margin-bottom: 0.3em;
+}
+
+.author-footnotes p {
+    margin: 0.1em 0;
+    text-indent: 0;
+}
+
+/* History */
+.history {
+    font-size: 7.5pt;
+    margin-bottom: 0.3em;
+    color: #555;
+}
+
+.history p {
+    margin: 0.05em 0;
+    text-indent: 0;
+}
+
+/* Editors */
+.editors {
+    font-size: 7.5pt;
+    margin-bottom: 0.3em;
+}
+
+.editors p {
+    margin: 0.1em 0;
+    text-indent: 0;
+}
+
+/* Copyright */
+.copyright {
+    font-size: 7pt;
+    margin-bottom: 0.5em;
+    color: #555;
+    line-height: 1.3;
+}
+
+.copyright p {
+    margin: 0.05em 0;
+    text-indent: 0;
+}
+
+/* ─── Abstract ─────────────────────────────────────────────────── */
+.abstract {
+    margin: 0.8em 0;
+    padding: 0;
+}
+
+.abstract h2 {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+}
+
+.abstract p {
+    font-size: 8.5pt;
+    line-height: 1.4;
+    margin: 0.2em 0;
+    text-indent: 0;
+}
+
+/* Keywords */
+.keywords {
+    font-size: 8pt;
+    margin: 0.5em 0;
+}
+
+.keywords p {
+    margin: 0;
+    text-indent: 0;
+}
+
+/* ─── Two-Column Body ──────────────────────────────────────────── */
+.article-body {
+    column-count: 2;
+    column-gap: 5mm;
+    column-fill: balance;
+    margin-top: 1em;
+    text-align: justify;
+}
+
+/* Section Headings */
+.section-title {
+    font-size: 10pt;
+    font-weight: bold;
+    margin: 1em 0 0.4em 0;
+    column-break-after: avoid;
+}
+
+.subsection-title {
+    font-size: 9pt;
+    font-weight: bold;
+    font-style: italic;
+    margin: 0.7em 0 0.3em 0;
+    column-break-after: avoid;
+}
+
+h4 {
+    font-size: 9pt;
+    font-weight: bold;
+    margin: 0.5em 0 0.2em 0;
+    column-break-after: avoid;
+}
+
+h5, h6 {
+    font-size: 9pt;
+    font-weight: bold;
+    font-style: italic;
+    margin: 0.4em 0 0.2em 0;
+    column-break-after: avoid;
+}
+
+/* Paragraphs */
+.article-body p {
+    margin: 0.2em 0;
+    text-indent: 1.5em;
+    line-height: 1.5;
+}
+
+.article-body p:first-child {
+    text-indent: 0;
+}
+
+/* ─── Figures ──────────────────────────────────────────────────── */
+.figure-wrap {
+    column-span: all;
+    text-align: center;
+    margin: 1em 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.fig-label {
+    font-weight: bold;
+    font-size: 8.5pt;
+    margin-bottom: 0.2em;
+    text-indent: 0 !important;
+}
+
+.fig-caption {
+    font-size: 8pt;
+    font-style: italic;
+    margin-bottom: 0.4em;
+    text-indent: 0 !important;
+}
+
+.figure-wrap img {
+    max-width: 100%;
+    height: auto;
+    max-height: 15cm;
+}
+
+.fig-missing {
+    font-size: 8pt;
+    color: #999;
+    font-style: italic;
+}
+
+/* ─── Tables ───────────────────────────────────────────────────── */
+.table-wrap {
+    column-span: all;
+    margin: 1em 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    font-size: 7.5pt;
+}
+
+.table-label {
+    font-weight: bold;
+    font-size: 8pt;
+    margin-bottom: 0.1em;
+    text-indent: 0 !important;
+}
+
+.table-caption {
+    font-size: 8pt;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+    text-indent: 0 !important;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.3em 0;
+    font-size: 7.5pt;
+}
+
+/* Three-line table style */
+thead {
+    border-top: 1.5pt solid #000;
+    border-bottom: 0.5pt solid #000;
+}
+
+tbody {
+    border-bottom: 1.5pt solid #000;
+}
+
+th {
+    padding: 2px 4px;
+    font-weight: bold;
+    text-align: left;
+    vertical-align: middle;
+}
+
+td {
+    padding: 2px 4px;
+    text-align: left;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.table-fn {
+    font-size: 7pt;
+    margin: 0.15em 0;
+    text-indent: 0 !important;
+    line-height: 1.35;
+}
+
+/* ─── Display Formulas ─────────────────────────────────────────── */
+.display-formula {
+    text-align: center;
+    margin: 0.8em 0;
+    position: relative;
+}
+
+.display-formula svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.formula-label {
+    position: relative;
+    float: right;
+    right: 0;
+    font-size: 9pt;
+}
+
+.formula-fallback {
+    font-family: "Times New Roman", serif;
+    font-style: italic;
+    font-size: 9pt;
+}
+
+/* ─── Inline Elements ──────────────────────────────────────────── */
+.inline-formula svg {
+    vertical-align: middle;
+    height: 1.1em;
+}
+
+.inline-formula-fallback {
+    font-family: "Times New Roman", serif;
+    font-style: italic;
+}
+
+.sc {
+    font-variant: small-caps;
+}
+
+/* ─── Blockquote ───────────────────────────────────────────────── */
+blockquote {
+    margin: 0.5em 1.5em;
+    font-size: 8.5pt;
+    border-left: 2px solid #ccc;
+    padding-left: 1em;
+}
+
+blockquote p {
+    text-indent: 0 !important;
+}
+
+blockquote cite {
+    display: block;
+    text-align: right;
+    font-style: italic;
+    font-size: 8pt;
+    margin-top: 0.3em;
+}
+
+/* ─── Lists ────────────────────────────────────────────────────── */
+.article-body ul,
+.article-body ol {
+    margin: 0.3em 0 0.3em 1.5em;
+    padding: 0;
+}
+
+.article-body li {
+    margin: 0.1em 0;
+}
+
+/* ─── Back Matter ──────────────────────────────────────────────── */
+.article-back {
+    margin-top: 1.5em;
+    padding-top: 0.8em;
+    border-top: 1px solid #000;
+    font-size: 9pt;
+}
+
+.back-title {
+    font-size: 10pt;
+    font-weight: bold;
+    margin: 0.8em 0 0.4em 0;
+}
+
+.back-section {
+    margin: 0.5em 0;
+}
+
+/* References */
+.ref-list {
+    font-size: 8pt;
+    line-height: 1.4;
+    padding-left: 2em;
+    margin: 0.3em 0;
+}
+
+.ref-list li {
+    margin-bottom: 0.3em;
+    word-break: break-word;
+}
+
+/* Acknowledgment */
+.acknowledgment {
+    font-size: 8.5pt;
+    margin: 0.5em 0;
+}
+
+.acknowledgment p {
+    text-indent: 0 !important;
+    margin: 0.2em 0;
+}
+
+/* Footnotes */
+.footnotes {
+    font-size: 7.5pt;
+    margin: 0.3em 0;
+}
+
+.fn-p {
+    text-indent: 0 !important;
+    margin: 0.15em 0;
+}
+
+/* Bio */
+.bio {
+    font-size: 8pt;
+    margin: 0.5em 0;
+}
+
+.bio h3 {
+    font-size: 9pt;
+    font-weight: bold;
+    margin-bottom: 0.2em;
+}
+
+/* Notes */
+.notes {
+    font-size: 7.5pt;
+    margin: 0.3em 0;
+}
+
+/* ─── Superscript & Subscript ──────────────────────────────────── */
+sup {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+    top: -0.4em;
+}
+
+sub {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+    bottom: -0.25em;
+}
+
+/* ─── Links ────────────────────────────────────────────────────── */
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+/* ─── Running Headers Setup ────────────────────────────────────── */
+.article-front {
+    string-set: journal-abbrev attr(data-journal);
+}
+
+/* ─── Print / Break Control ────────────────────────────────────── */
+h2, h3, h4, h5, h6 {
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+.figure-wrap,
+.table-wrap,
+.display-formula {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+p {
+    break-inside: avoid;
+    orphans: 2;
+    widows: 2;
+}
+
+/* ─── Small caps fix ───────────────────────────────────────────── */
+.sc {
+    font-variant: small-caps;
+    letter-spacing: 0.02em;
+}

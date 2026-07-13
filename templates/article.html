@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ title_text | e }}</title>
+<style>
+{{ css | safe }}
+</style>
+</head>
+<body>
+
+{# ─── FRONT MATTER (full width) ─── #}
+<header class="article-front">
+
+  {# Journal header line #}
+  <div class="journal-meta">
+    <p class="journal-citation">
+      {{ citation_line }}
+      {% if front.doi %}
+      <br><span class="doi">https://doi.org/{{ front.doi }}</span>
+      {% endif %}
+    </p>
+    {% if front.article_type_label %}
+    <p class="article-type">{{ front.article_type_label | upper }}</p>
+    {% endif %}
+  </div>
+
+  {# Title #}
+  <h1 class="article-title">
+    {%- for item in front.title -%}
+      {{ render_inline(item) }}
+    {%- endfor -%}
+  </h1>
+
+  {# Authors #}
+  <div class="authors">
+    {% for author in front.authors %}
+    <span class="author">
+      {{ author.name }}
+      {%- for xref in author.xrefs -%}
+        <sup>{{ render_inline_list(xref.content) }}</sup>
+      {%- endfor -%}
+    </span>{% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </div>
+
+  {# Affiliations #}
+  <div class="affiliations">
+    {% for aff in front.affiliations %}
+    <p class="aff"><sup>{{ aff.label }}</sup>{{ aff.text }}</p>
+    {% endfor %}
+  </div>
+
+  {# Correspondence #}
+  {% if front.correspondence %}
+  <div class="correspondence">
+    {% for corr in front.correspondence %}
+    <p>
+      <sup>*</sup>Correspondence:
+      {% for email in corr.emails %}
+      <a href="mailto:{{ email }}">{{ email }}</a>{% if not loop.last %}; {% endif %}
+      {% endfor %}
+      {{ corr.text | replace('*', '') | striptags | trim }}
+    </p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# Author footnotes (e.g., equal contribution) #}
+  {% if front.author_footnotes %}
+  <div class="author-footnotes">
+    {% for fn in front.author_footnotes %}
+    <p>{{ render_inline_list(fn) }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# History #}
+  {% set history = get_history() %}
+  {% if history %}
+  <div class="history">
+    {% for line in history %}
+    <p>{{ line }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# Academic Editor #}
+  {% if front.editors %}
+  <div class="editors">
+    <p>Academic Editor{{ 's' if front.editors|length > 1 else '' }}:
+    {% for ed in front.editors %}
+      {{ ed.name }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+    </p>
+  </div>
+  {% endif %}
+
+  {# Copyright & License #}
+  {% if front.copyright %}
+  <div class="copyright">
+    <p>{{ front.copyright }}</p>
+    {% if front.license %}
+    <p>{{ render_inline_list(front.license) }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {# Abstract #}
+  {% if front.abstract %}
+  <div class="abstract">
+    <h2>Abstract</h2>
+    {% for sec in front.abstract %}
+      {% if sec.title %}<p><strong>{{ sec.title }}</strong></p>{% endif %}
+      {% for para in sec.paragraphs %}
+      <p>{{ render_inline_list(para) }}</p>
+      {% endfor %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# Keywords #}
+  {% if front.keywords %}
+  <div class="keywords">
+    <p><strong>Keywords: </strong>
+    {% for kw in front.keywords %}{{ kw }}{% if not loop.last %}; {% endif %}{% endfor %}
+    </p>
+  </div>
+  {% endif %}
+</header>
+
+{# ─── BODY (two-column) ─── #}
+<div class="article-body">
+  {% for item in body %}
+    {{ render_body_item(item) }}
+  {% endfor %}
+</div>
+
+{# ─── BACK MATTER (single column) ─── #}
+<div class="article-back">
+  {% for item in back %}
+    {{ render_back_item(item) }}
+  {% endfor %}
+</div>
+
+</body>
+</html>

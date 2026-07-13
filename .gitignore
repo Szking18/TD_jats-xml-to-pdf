@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+
+# MathML cache
+.mathml_cache/
+
+# Output
+sample_output/
+*.pdf
+*_debug.html
+
+# Node
+node_modules/
+package-lock.json
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+conversations/
+opencode.json

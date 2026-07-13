@@ -1,0 +1,81 @@
+========================================
+  XML to PDF 项目 — 工作步骤说明
+========================================
+
+一、项目目标
+  将 JATS 格式的 XML 学术论文文件转换为 PDF 文档。
+
+二、项目文件结构
+  xml_to_pdf/
+    ├── .vscode/
+    │   ├── launch.json          # F5 调试配置（弹出外部黑窗口）
+    │   └── settings.json        # Code Runner 配置（Ctrl+Alt+N 弹出黑窗口）
+    ├── parse_jats.py            # XML 解析脚本（提取标题、作者、摘要）
+    ├── sample.xml               # 示例 JATS XML 文件
+    ├── test.py                  # 简易测试脚本
+    └── 项目工作说明.txt         # 本文件
+
+三、环境配置
+
+  1. Python 安装路径
+     C:\Users\27913\AppData\Local\Programs\Python\Python314\python.exe
+
+  2. 注意：系统 PATH 中的 python 命令指向 Microsoft Store 占位符，
+     而非实际安装的 Python。因此在 VS Code 配置中需使用完整路径。
+
+  3. VS Code 扩展
+     - Python（微软官方）
+     - Code Runner（用于 Ctrl+Alt+N 快速运行）
+
+四、运行方式
+
+  1. Code Runner（Ctrl+Alt+N）
+     - 弹出独立 cmd 黑窗口运行当前文件
+     - 运行完后窗口保持不关（cmd /k）
+     - 配置见 .vscode/settings.json
+
+  2. VS Code 调试（F5）
+     - 弹出独立外部控制台
+     - 支持断点调试
+     - 配置见 .vscode/launch.json
+
+五、XML 解析（parse_jats.py）
+
+  当前功能：
+  - 读取 sample.xml
+  - 提取文章标题（article-title）
+  - 提取作者列表（contrib/name/surname + given-names）
+  - 提取摘要全文（abstract//p）
+
+  注意事项：
+  - XML 文件必须格式完整（无缺失闭合标签）
+  - 特殊字符（如 <）需转义为 &lt;
+  - 查找元素时注意嵌套层级（如 surname 在 name 子元素内）
+
+六、PDF 生成（待实现）
+
+  推荐方案：WeasyPrint
+
+  步骤：
+  1. 安装 WeasyPrint：pip install weasyprint
+  2. 编写转换模块，将 JATS XML 转为 HTML
+  3. 编写 CSS 样式控制 PDF 排版
+  4. 调用 WeasyPrint 输出 PDF
+
+  备选方案：
+  - ReportLab：纯 Python 代码绘制 PDF，灵活但开发量大
+  - XSL-FO + Apache FOP：出版业标准，需 Java 环境
+  - FPDF2：轻量方案
+
+七、常见问题
+
+  Q: Ctrl+Alt+N 运行时提示 code=9009
+  A: 找不到 python 命令。检查 .vscode/settings.json 中的 python 路径是否正确。
+
+  Q: 黑窗口一闪而过
+  A: 脚本运行完后自动关闭。如需查看输出，配置中已使用 cmd /k 保持窗口。
+
+  Q: XML 解析报错 "not well-formed"
+  A: XML 文件格式有误，检查是否缺少闭合标签或包含未转义的特殊字符。
+八。一些想法
+1.自动替换p<为p&lt

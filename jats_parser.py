@@ -794,6 +794,9 @@ def _parse_mixed_recursive(elem, result):
                            'content': _parse_mixed_content(child)})
         elif tag == 'p':
             result.append({'type': 'paragraph_inline', 'content': _parse_mixed_content(child)})
+        elif tag == 'graphic':
+            href = _attr(child, 'href', ns='xlink') or _attr(child, 'href', '')
+            result.append({'type': 'inline_graphic', 'href': href})
         else:
             # 递归处理未知元素
             _parse_mixed_recursive(child, result)

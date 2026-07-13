@@ -27,18 +27,14 @@ _EXTRACT_DIRS = []
 
 
 def _extract_zip_images(xml_dir):
-    """解压 XML 目录下的所有 ZIP 文件中的图片到临时目录。
-
-    Returns:
-        解压后的图片所在目录列表（用于图片搜索）
-    """
+    """解压 XML 目录下的所有 ZIP 文件中的图片到临时目录（保留目录结构）。"""
+    import re
     extract_paths = []
 
     for fname in os.listdir(xml_dir):
         if fname.lower().endswith('.zip'):
             zip_path = os.path.join(xml_dir, fname)
             try:
-                # 创建临时解压目录
                 tmpdir = tempfile.mkdtemp(prefix='jats_imgs_')
                 _EXTRACT_DIRS.append(tmpdir)
 
@@ -47,20 +43,21 @@ def _extract_zip_images(xml_dir):
                     for member in zf.namelist():
                         ext = os.path.splitext(member)[1].lower()
                         if ext in img_exts:
-                            # 解压到临时目录，保留文件名
-                            target_name = os.path.basename(member)
-                            target_path = os.path.join(tmpdir, target_name)
-                            # 避免重名覆盖
-                            counter = 1
-                            while os.path.exists(target_path):
-                                base, e = os.path.splitext(target_name)
-                                target_path = os.path.join(tmpdir, f"{base}_{counter}{e}")
-                                counter += 1
+                            # 保留 ZIP 内的目录结构
+                            target_path = os.path.join(tmpdir, member)
+                            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                            # 避免覆盖
+                            if os.path.exists(target_path):
+                                base, e = os.path.splitext(target_path)
+                                counter = 1
+                                while os.path.exists(f"{base}_{counter}{e}"):
+                                    counter += 1
+                                target_path = f"{base}_{counter}{e}"
                             with zf.open(member) as src:
                                 with open(target_path, 'wb') as dst:
                                     shutil.copyfileobj(src, dst)
-                    extract_paths.append(tmpdir)
-                    print(f"       Extracted images from: {fname}")
+                extract_paths.append(tmpdir)
+                print(f"       Extracted images from: {fname}")
             except Exception as e:
                 print(f"       [WARN] Could not extract {fname}: {e}")
 
@@ -77,33 +74,51 @@ def _cleanup():
 
 
 def _resolve_image(href, xml_dir, extract_dirs):
-    """解析图片路径。"""
+    """智能解析图片路径，支持多种命名约定。"""
+    import re
     if not href:
         return ''
 
-    # 候选路径列表
+    basename = os.path.basename(href)
+
+    # === 策略1: 精确路径匹配 ===
     candidates = [
-        os.path.join(xml_dir, href),
-        os.path.join(xml_dir, os.path.basename(href)),
+        os.path.join(xml_dir, href),       # XML目录下的相对路径
+        os.path.join(xml_dir, basename),   # XML目录下的文件名
     ]
     for ed in extract_dirs:
-        candidates.append(os.path.join(ed, os.path.basename(href)))
+        candidates.append(os.path.join(ed, href))       # 解压目录下的相对路径
+        candidates.append(os.path.join(ed, basename))   # 解压目录下的文件名
 
     for c in candidates:
         if os.path.exists(c):
             return c
 
-    # 搜索子目录
-    basename = os.path.basename(href)
+    # === 策略2: 递归搜索 basename ===
     for search_dir in [xml_dir] + extract_dirs:
         for root, dirs, files in os.walk(search_dir):
             if basename in files:
                 return os.path.join(root, basename)
 
-    # 原始路径
-    abs_href = os.path.join(xml_dir, href)
-    if os.path.exists(abs_href):
-        return abs_href
+    # === 策略3: 模糊匹配（fig-01.jpg ↔ fig1.jpg, fig-02.jpg ↔ fig10.jpg 等）===
+    basename_noext, ext = os.path.splitext(basename)
+    # 提取数字
+    num_match = re.search(r'(\d+)', basename_noext)
+    if num_match:
+        num = int(num_match.group(1))
+        # 生成所有可能的数字变体
+        alt_names = []
+        # 带前导零: fig01, fig-01, Fig.01
+        for fmt in [f'{num}', f'{num:02d}', f'{num:03d}', f'{num:04d}']:
+            for prefix in ['fig', 'Fig', 'figure', 'Figure', '']:
+                for sep in ['', '-', '_', '.', ' ']:
+                    alt_names.append(f'{prefix}{sep}{fmt}{ext}')
+
+        for search_dir in [xml_dir] + extract_dirs:
+            for root, dirs, files in os.walk(search_dir):
+                for f in files:
+                    if f.lower() in [a.lower() for a in alt_names]:
+                        return os.path.join(root, f)
 
     return href
 
@@ -113,8 +128,12 @@ def _fix_image_paths(doc, xml_dir, extract_dirs):
 
     def walk_and_fix(node):
         if isinstance(node, dict):
-            if node.get('type') == 'figure' and node.get('img_path'):
+            # 图片/figure
+            if node.get('type') in ('figure', 'inline_graphic') and node.get('img_path'):
                 node['img_path'] = _resolve_image(node['img_path'], xml_dir, extract_dirs)
+            # inline_graphic with href
+            if node.get('type') == 'inline_graphic' and node.get('href'):
+                node['img_path'] = _resolve_image(node['href'], xml_dir, extract_dirs)
             for key, value in node.items():
                 walk_and_fix(value)
         elif isinstance(node, list):

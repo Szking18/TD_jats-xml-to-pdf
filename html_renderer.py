@@ -4,11 +4,13 @@ Jinja2 HTML 渲染器
 使用 jinja2.Markup 防止自动转义。
 """
 import os
+import pathlib
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _TEMPLATE_DIR = os.path.join(_SCRIPT_DIR, 'templates')
+_LOGO_DIR = os.path.join(_SCRIPT_DIR, 'logos')
 
 _env = Environment(
     loader=FileSystemLoader(_TEMPLATE_DIR),
@@ -24,9 +26,15 @@ def render_html(doc_data: dict) -> str:
     with open(css_path, 'r', encoding='utf-8') as f:
         css_content = f.read()
 
+    journal = doc_data.get('front', {}).get('journal', {})
+    publisher_logo_html = _build_publisher_logo(journal.get('publisher', ''))
+    journal_logo_html = _build_journal_logo(journal.get('publisher_id', ''))
+
     ctx = dict(doc_data)
     ctx.update({
         'css': Markup(css_content),
+        'publisher_logo': Markup(publisher_logo_html),
+        'journal_logo': Markup(journal_logo_html),
         'render_inline': _render_inline,
         'render_inline_list': _render_inline_list,
         'render_body_item': _render_body_item,
@@ -36,6 +44,35 @@ def render_html(doc_data: dict) -> str:
         'striptags': _strip_tags,
     })
     return template.render(**ctx)
+
+
+# ─── Logo helpers ──────────────────────────────────────────────────
+
+def _logo_path(name):
+    if not name:
+        return None
+    name = name.strip().lower().replace(' ', '_').replace('/', '_')
+    name = ''.join(c for c in name if c.isalnum() or c == '_')
+    path = os.path.join(_LOGO_DIR, f'{name}.png')
+    return path if os.path.exists(path) else None
+
+
+def _build_publisher_logo(publisher_name):
+    path = _logo_path(publisher_name)
+    if not path:
+        return ''
+    uri = pathlib.Path(path).as_uri()
+    return f'<div id="publisher-logo"><img src="{uri}" alt="{publisher_name}" /></div>'
+
+
+def _build_journal_logo(journal_id):
+    if not journal_id:
+        return ''
+    path = _logo_path(f'journal_{journal_id}')
+    if not path:
+        return ''
+    uri = pathlib.Path(path).as_uri()
+    return f'<div id="journal-logo"><img src="{uri}" alt="{journal_id}" /></div>'
 
 
 # ─── Inline rendering (all return Markup) ─────────────────────────

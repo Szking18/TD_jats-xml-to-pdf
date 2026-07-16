@@ -72,6 +72,7 @@ def render_mathml(mathml_str, display=False):
             input=mathml_str,
             capture_output=True,
             text=True,
+            encoding='utf-8',
             timeout=30,
             cwd=_SCRIPT_DIR,
         )

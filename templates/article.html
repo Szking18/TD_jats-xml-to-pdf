@@ -7,19 +7,25 @@
 </head>
 <body>
 
+{# ─── Publisher Logo (CSS running element for footer) ─── #}
+{{ publisher_logo }}
+
 {# ─── FRONT MATTER ─── #}
 <header class="article-front">
 
-  <div class="journal-meta">
-    <p class="journal-citation">
-      {{ citation_line }}
-      {% if front.doi %}
-      <br><span class="doi">https://doi.org/{{ front.doi }}</span>
+  <div class="journal-header">
+    {{ journal_logo }}
+    <div class="journal-header-text">
+      <p class="journal-citation">
+        {{ citation_line }}
+        {% if front.doi %}
+        <br><span class="doi">https://doi.org/{{ front.doi }}</span>
+        {% endif %}
+      </p>
+      {% if front.article_type_label %}
+      <p class="article-type">{{ front.article_type_label | upper }}</p>
       {% endif %}
-    </p>
-    {% if front.article_type_label %}
-    <p class="article-type">{{ front.article_type_label | upper }}</p>
-    {% endif %}
+    </div>
   </div>
 
   <h1 class="article-title">{{ render_inline_list(front.title) }}</h1>

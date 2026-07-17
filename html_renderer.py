@@ -35,9 +35,9 @@ def render_html(doc_data: dict) -> str:
         'css': Markup(css_content),
         'publisher_logo': Markup(publisher_logo_html),
         'journal_logo': Markup(journal_logo_html),
+        'body_blocks': _render_body_blocks(doc_data.get('body', [])),
         'render_inline': _render_inline,
         'render_inline_list': _render_inline_list,
-        'render_body_item': _render_body_item,
         'render_back_item': _render_back_item,
         'get_history': lambda: _get_history(doc_data),
         'citation_line': _get_citation_line(doc_data),
@@ -101,7 +101,11 @@ def _render_inline(item):
     elif t == 'underline':
         return Markup(f'<u>{_render_inline_list(content)}</u>')
     elif t == 'xref':
-        return Markup(f'<sup>{_render_inline_list(content)}</sup>')
+        rid = item.get('rid', '')
+        content_html = _render_inline_list(content)
+        if rid:
+            return Markup(f'<a href="#{rid}" class="xref-link"><sup>{content_html}</sup></a>')
+        return Markup(f'<sup>{content_html}</sup>')
     elif t == 'link':
         href = item.get('href', '')
         return Markup(f'<a href="{_escape(href)}">{_render_inline_list(content)}</a>')
@@ -158,8 +162,6 @@ def _render_body_item(item):
         return Markup(f'<p>{_render_inline_list(item.get("content", []))}</p>')
     elif t == 'figure':
         return Markup(_render_figure(item))
-    elif t == 'table':
-        return Markup(_render_table(item))
     elif t == 'display_formula':
         return Markup(_render_formula(item))
     elif t == 'blockquote':
@@ -169,21 +171,66 @@ def _render_body_item(item):
     return Markup('')
 
 
+def _render_body_blocks(body):
+    """Render body items, separating table (full-width) from multicol content."""
+    multicol = []
+    blocks = []
+
+    def flush():
+        if multicol:
+            blocks.append('<div class="article-body">')
+            blocks.append('\n'.join(multicol))
+            blocks.append('</div>')
+            multicol.clear()
+
+    for item in body:
+        _walk_body_item(item, multicol, blocks, flush)
+
+    flush()
+    return Markup('\n'.join(blocks))
+
+
+def _walk_body_item(item, multicol, blocks, flush):
+    t = item.get('type', '')
+    if t == 'section':
+        sec_id = item.get('id', '')
+        title = item.get('title', [])
+        level = item.get('level', 1)
+        htag = f'h{min(level + 1, 6)}'
+        css_class = 'section-title' if level <= 2 else 'subsection-title'
+        if title:
+            id_attr = f' id="{sec_id}"' if sec_id else ''
+            multicol.append(f'<{htag} class="{css_class}"{id_attr}>{_render_inline_list(title)}</{htag}>')
+        for child in item.get('children', []):
+            _walk_body_item(child, multicol, blocks, flush)
+    elif t == 'table':
+        flush()
+        blocks.append(str(_render_table(item)))
+    else:
+        multicol.append(str(_render_body_item(item)))
+
+
 def _render_section(section):
     parts = []
+    sec_id = section.get('id', '')
     level = section.get('level', 1)
     htag = f'h{min(level + 1, 6)}'
     css_class = 'section-title' if level <= 2 else 'subsection-title'
     title = section.get('title', [])
     if title:
-        parts.append(f'<{htag} class="{css_class}">{_render_inline_list(title)}</{htag}>')
+        id_attr = f' id="{sec_id}"' if sec_id else ''
+        parts.append(f'<{htag} class="{css_class}"{id_attr}>{_render_inline_list(title)}</{htag}>')
     for child in section.get('children', []):
         parts.append(str(_render_body_item(child)))
     return Markup('\n'.join(parts))
 
 
 def _render_figure(fig):
-    parts = ['<div class="figure-wrap">']
+    fig_id = fig.get('id', '')
+    if fig_id:
+        parts = [f'<div class="figure-wrap" id="{fig_id}">']
+    else:
+        parts = ['<div class="figure-wrap">']
     label = fig.get('label', [])
     parts.append(f'<p class="fig-label">{_render_inline_list(label) if isinstance(label, list) else _escape(str(label))}</p>')
     caption = fig.get('caption', '')
@@ -201,7 +248,11 @@ def _render_figure(fig):
 
 
 def _render_table(tbl):
-    parts = ['<div class="table-wrap">']
+    tbl_id = tbl.get('id', '')
+    if tbl_id:
+        parts = [f'<div class="table-wrap" id="{tbl_id}">']
+    else:
+        parts = ['<div class="table-wrap">']
     label = tbl.get('label', [])
     parts.append(f'<p class="table-label">{_render_inline_list(label) if isinstance(label, list) else _escape(str(label))}</p>')
     caption = tbl.get('caption', [])
@@ -249,7 +300,11 @@ def _render_table_row(row, default_tag):
 
 
 def _render_formula(formula):
-    parts = ['<div class="display-formula">']
+    fid = formula.get('id', '')
+    if fid:
+        parts = [f'<div class="display-formula" id="{fid}">']
+    else:
+        parts = ['<div class="display-formula">']
     svg = formula.get('svg', '')
     if svg and '<svg' in svg:
         parts.append(svg)
@@ -313,8 +368,12 @@ def _render_back_item(item):
         parts.append(f'<h2 class="back-title">{_render_inline_list(ti) if isinstance(ti, list) else _escape(str(ti))}</h2>')
         parts.append('<ol class="ref-list">')
         for ref in item.get('references', []):
+            ref_id = ref.get('id', '')
             ref_content = ref.get('content', [])
-            parts.append(f'<li>{_render_inline_list(ref_content)}</li>')
+            if ref_id:
+                parts.append(f'<li id="{ref_id}">{_render_inline_list(ref_content)}</li>')
+            else:
+                parts.append(f'<li>{_render_inline_list(ref_content)}</li>')
         parts.append('</ol>')
         parts.append('</div>')
         return Markup('\n'.join(parts))

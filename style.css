@@ -220,41 +220,42 @@ body {
 
 /* ─── Tables ───────────────────────────────────────────────────── */
 .table-wrap {
-    column-span: all;
-    margin: 0.8em 0;
+    margin: 0.4em 0;
     break-inside: avoid;
     font-size: 7pt;
 }
 .table-label {
     font-weight: bold;
     font-size: 7.5pt;
-    margin-bottom: 0.1em;
+    margin-bottom: 0.05em;
     text-indent: 0 !important;
 }
 .table-caption {
     font-size: 7.5pt;
     font-weight: bold;
-    margin-bottom: 0.2em;
+    margin-bottom: 0.1em;
     text-indent: 0 !important;
 }
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0.2em 0;
+    margin: 0.1em 0;
     font-size: 7pt;
 }
 thead { border-top: 1.5pt solid #000; border-bottom: 0.5pt solid #000; }
 tbody { border-bottom: 1.5pt solid #000; }
 th {
-    padding: 2px 3px;
+    padding: 1px 2px;
     font-weight: bold;
     text-align: left;
     vertical-align: middle;
+    line-height: 1.1;
 }
 td {
-    padding: 2px 3px;
+    padding: 1px 2px;
     text-align: left;
     vertical-align: middle;
+    line-height: 1.1;
 }
 .table-fn {
     font-size: 6.5pt;
@@ -318,11 +319,12 @@ blockquote cite { display: block; text-align: right; font-style: italic; font-si
 .notes { font-size: 7pt; margin: 0.2em 0; }
 
 /* ─── Sup/Sub ──────────────────────────────────────────────────── */
-sup { font-size: 0.75em; vertical-align: top; position: relative; top: -0.35em; line-height: 0; }
-sub { font-size: 0.75em; vertical-align: bottom; position: relative; bottom: -0.35em; line-height: 0; }
+sup { font-size: 0.75em; vertical-align: baseline; position: relative; top: -0.3em; line-height: 0; }
+sub { font-size: 0.7em; vertical-align: baseline; position: relative; bottom: -0.3em; line-height: 0; }
 
 /* ─── Links ────────────────────────────────────────────────────── */
 a { color: #003399; text-decoration: none; }
+a.xref-link sup { position: relative; vertical-align: baseline; font-size: 0.85em; line-height: 0; top: -0.06em; }
 
 /* ─── Break control ────────────────────────────────────────────── */
 h2, h3, h4, h5, h6 { break-after: avoid; }

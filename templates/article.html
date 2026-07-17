@@ -98,9 +98,7 @@
 </header>
 
 {# ─── BODY ─── #}
-<div class="article-body">
-  {% for item in body %}{{ render_body_item(item) }}{% endfor %}
-</div>
+{{ body_blocks }}
 
 {# ─── BACK ─── #}
 <div class="article-back">

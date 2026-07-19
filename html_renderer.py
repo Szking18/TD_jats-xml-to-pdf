@@ -291,9 +291,16 @@ def _render_table_row(row, default_tag):
             attr_str += f' colspan="{cs}"'
         if rs and rs != '1':
             attr_str += f' rowspan="{rs}"'
+        cell_style = attrs.get('style', '')
         align = attrs.get('align', '')
+        style_parts = []
         if align:
-            attr_str += f' style="text-align:{align}"'
+            style_parts.append(f'text-align:{align}')
+        if cell_style:
+            existing = [s.strip() for s in cell_style.split(';') if s.strip() and not s.strip().startswith('text-align')]
+            style_parts.extend(existing)
+        if style_parts:
+            attr_str += f' style="{"; ".join(style_parts)}"'
         content = str(_render_inline_list(cell.get('content', [])))
         cells.append(f'<{ctag}{attr_str}>{content}</{ctag}>')
     return '<tr>' + ''.join(cells) + '</tr>'

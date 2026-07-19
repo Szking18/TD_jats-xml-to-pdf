@@ -59,7 +59,7 @@
   {% set history = get_history() %}
   {% if history %}
   <div class="history">
-    {% for line in history %}<p>{{ line }}</p>{% endfor %}
+    <p>{{ history | join('&nbsp;&nbsp;&nbsp;&nbsp;') | safe }}</p>
   </div>
   {% endif %}
 

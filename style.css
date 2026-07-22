@@ -5,7 +5,7 @@
 
 @page {
     size: A4;
-    margin: 2cm 1.5cm 2cm 1.5cm;
+    margin: 2cm 1.7cm 2cm 1.7cm;
     @bottom-center {
         content: counter(page);
         font-size: 8pt;
@@ -39,10 +39,10 @@
 
 body {
     font-family: "Times New Roman", Times, serif;
-    font-size: 9pt;
+    font-size: 10pt;
     line-height: 1.5;
     color: #000;
-    text-align: justify;
+    text-align: left;
     widows: 2;
     orphans: 2;
 }
@@ -107,7 +107,7 @@ body {
     text-indent: 0;
 }
 .article-title {
-    font-size: 13pt;
+    font-size: 16pt;
     font-weight: bold;
     text-align: left;
     margin: 0.4em 0;
@@ -152,12 +152,12 @@ body {
     padding: 0;
 }
 .abstract h2 {
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     margin-bottom: 0.2em;
 }
 .abstract p {
-    font-size: 8pt;
+    font-size: 9pt;
     line-height: 1.35;
     margin: 0.15em 0;
     text-indent: 0;
@@ -173,29 +173,31 @@ body {
     column-count: 2;
     column-gap: 5mm;
     margin-top: 1em;
+    text-align: justify;
+    hyphens: auto;
 }
 
 .section-title {
-    font-size: 9.5pt;
+    font-size: 12pt;
     font-weight: bold;
     margin: 0.8em 0 0.3em 0;
     break-after: avoid;
 }
 .subsection-title {
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     font-style: italic;
     margin: 0.5em 0 0.2em 0;
     break-after: avoid;
 }
 .article-body h4 {
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     margin: 0.4em 0 0.15em 0;
     break-after: avoid;
 }
 .article-body h5, .article-body h6 {
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     font-style: italic;
     margin: 0.3em 0 0.15em 0;
@@ -296,7 +298,7 @@ td {
 /* ─── Blockquote ───────────────────────────────────────────────── */
 blockquote {
     margin: 0.4em 1.5em;
-    font-size: 8pt;
+    font-size: 9pt;
     border-left: 2px solid #ccc;
     padding-left: 1em;
 }
@@ -316,7 +318,7 @@ blockquote cite { display: block; text-align: right; font-style: italic; font-si
     column-count: 2;
     column-gap: 5mm;
 }
-.back-title { font-size: 9pt; font-weight: bold; margin: 0.6em 0 0.3em 0; column-span: all; }
+.back-title { font-size: 10pt; font-weight: bold; margin: 0.6em 0 0.3em 0; column-span: all; }
 .back-section { margin: 0.4em 0; break-inside: avoid; }
 .ref-list {
     font-size: 7.5pt;

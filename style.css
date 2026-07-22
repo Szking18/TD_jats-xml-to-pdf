@@ -11,16 +11,30 @@
         font-size: 8pt;
         font-family: "Times New Roman", serif;
     }
+}
+
+/* 首页：不显示 IMR PRESS 图标 */
+@page :first {
+    @top-left { content: none; }
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
+}
+
+/* 偶数页 (2, 4, 6 ...)：IMR PRESS 图标位于右下角 */
+@page :left {
     @bottom-right {
         content: element(publisherLogo);
         vertical-align: middle;
     }
 }
 
-@page :first {
-    @top-left { content: none; }
-    @top-right { content: none; }
-    @bottom-right { content: none; }
+/* 奇数页 (3, 5, 7 ...)：IMR PRESS 图标位于左下角 */
+@page :right {
+    @bottom-left {
+        content: element(publisherLogo);
+        vertical-align: middle;
+    }
 }
 
 body {

@@ -1,0 +1,4 @@
+com\imrpress\xmltopdf\parser\JatsParser.class
+com\imrpress\xmltopdf\BatchRunner.class
+com\imrpress\xmltopdf\JatsToPdfConverter.class
+com\imrpress\xmltopdf\builder\HtmlBuilder.class

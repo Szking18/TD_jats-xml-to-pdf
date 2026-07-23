@@ -374,20 +374,24 @@ def _parse_contrib(contrib):
 def _parse_affiliation(aff):
     aff_id = _attr(aff, 'id', '')
     sup = _find(aff, 'sup')
-    label = _get_text(sup) if sup is not None else ''
-    # 获取除 sup 外的所有文本
+    label_text = _get_text(sup) if sup is not None else ''
+    # 收集所有文本：跳过 sup/label 元素自己的文本，但保留它们的 tail 文本
     parts = []
-    if sup is not None:
-        parts.append(_get_text(sup))
-        parts.append(' ')
+    if aff.text:
+        parts.append(aff.text)
     for child in aff:
-        if _tag(child) != 'sup':
-            parts.append(_get_text(child) if child.text else '')
-            parts.append(child.tail or '')
-    text = ''.join(parts).strip()
-    # 更简洁的方式：直接用 itertext
-    text = ' '.join(aff.itertext()).strip()
-    return {'id': aff_id, 'label': label, 'text': text}
+        tag = _tag(child)
+        if tag in ('sup', 'label'):
+            # 跳过 sup/label 自己的文本，但保留 tail（紧跟其后的文本）
+            if child.tail:
+                parts.append(child.tail)
+        else:
+            # 普通子元素：保留其全部文本(含itertext)
+            parts.append(''.join(child.itertext()))
+            if child.tail:
+                parts.append(child.tail)
+    text = ' '.join(p for p in parts if p).strip()
+    return {'id': aff_id, 'label': label_text, 'text': text}
 
 
 def _parse_abstract(abstract):

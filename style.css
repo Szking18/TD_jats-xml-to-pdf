@@ -1,6 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════
    JATS Academic Journal PDF — CSS Paged Media Stylesheet
    WeasyPrint-compatible two-column academic layout
+
+   排版基准 (参考 IMR Press 标准输出实测):
+   - 正文: 10pt, line-height: 1.25
+   - 章节标题: 12pt Bold
+   - 文章标题: 16pt Bold
+   - 表格正文: 8.5pt
+   - 参考文献: 8.5pt
    ═══════════════════════════════════════════════════════════════ */
 
 @page {
@@ -40,7 +47,7 @@
 body {
     font-family: "Times New Roman", Times, serif;
     font-size: 10pt;
-    line-height: 1.5;
+    line-height: 1.25;
     color: #000;
     text-align: left;
     widows: 2;
@@ -111,7 +118,9 @@ body {
     font-weight: bold;
     text-align: left;
     margin: 0.4em 0;
-    line-height: 1.2;
+    line-height: 1.15;
+    word-spacing: normal;
+    letter-spacing: normal;
 }
 .authors {
     font-size: 9pt;
@@ -158,7 +167,7 @@ body {
 }
 .abstract p {
     font-size: 9pt;
-    line-height: 1.35;
+    line-height: 1.25;
     margin: 0.15em 0;
     text-indent: 0;
 }
@@ -205,9 +214,9 @@ body {
 }
 
 .article-body p {
-    margin: 0.15em 0;
-    text-indent: 1.5em;
-    line-height: 1.45;
+    margin: 0 0 0.15em 0;
+    text-indent: 1.2em;
+    line-height: 1.25;
 }
 
 /* ─── Figures ──────────────────────────────────────────────────── */
@@ -219,14 +228,16 @@ body {
 }
 .fig-label {
     font-weight: bold;
-    font-size: 8pt;
+    font-size: 9pt;
     margin-bottom: 0.1em;
     text-indent: 0 !important;
+    text-align: center;
 }
 .fig-caption {
-    font-size: 7.5pt;
+    font-size: 8pt;
     margin-bottom: 0.3em;
     text-indent: 0 !important;
+    text-align: center;
 }
 .figure-wrap img {
     max-width: 100%;
@@ -236,27 +247,31 @@ body {
 
 /* ─── Tables ───────────────────────────────────────────────────── */
 .table-wrap {
+    column-span: all;
     margin: 0.4em 0;
     break-inside: avoid;
-    font-size: 7pt;
+    font-size: 8.5pt;
 }
-.table-label {
-    font-weight: bold;
-    font-size: 7.5pt;
-    margin-bottom: 0.05em;
-    text-indent: 0 !important;
-}
-.table-caption {
-    font-size: 7.5pt;
+.table-title {
+    font-size: 9pt;
     font-weight: bold;
     margin-bottom: 0.1em;
     text-indent: 0 !important;
+    text-align: center;
+}
+.table-title p {
+    display: inline;
+    text-align: center;
+    text-indent: 0 !important;
+    font-size: 9pt;
+    font-weight: bold;
+    margin: 0;
 }
 table {
     width: 100%;
     border-collapse: collapse;
     margin: 0.1em 0;
-    font-size: 7pt;
+    font-size: 8.5pt;
 }
 thead { border-top: 1.5pt solid #000; border-bottom: 0.5pt solid #000; }
 tbody { border-bottom: 1.5pt solid #000; }
@@ -265,19 +280,19 @@ th {
     font-weight: bold;
     text-align: left;
     vertical-align: middle;
-    line-height: 1.1;
+    line-height: 1.15;
 }
 td {
     padding: 1px 2px;
     text-align: left;
     vertical-align: middle;
-    line-height: 1.1;
+    line-height: 1.15;
 }
 .table-fn {
-    font-size: 6.5pt;
+    font-size: 7pt;
     margin: 0.1em 0;
     text-indent: 0 !important;
-    line-height: 1.3;
+    line-height: 1.25;
 }
 
 /* ─── Display Formulas ─────────────────────────────────────────── */
@@ -314,33 +329,40 @@ blockquote cite { display: block; text-align: right; font-style: italic; font-si
     margin-top: 1.2em;
     padding-top: 0.6em;
     border-top: 1px solid #000;
-    font-size: 8pt;
+    font-size: 8.5pt;
     column-count: 2;
     column-gap: 5mm;
 }
-.back-title { font-size: 10pt; font-weight: bold; margin: 0.6em 0 0.3em 0; column-span: all; }
+.back-title { font-size: 12pt; font-weight: bold; margin: 0.8em 0 0.3em 0; column-span: all; }
 .back-section { margin: 0.4em 0; break-inside: avoid; }
 .ref-list {
-    font-size: 7.5pt;
-    line-height: 1.35;
+    font-size: 8.5pt;
+    line-height: 1.25;
     padding-left: 2em;
     margin: 0.2em 0;
 }
 .ref-list li { margin-bottom: 0.2em; break-inside: avoid; }
-.acknowledgment { font-size: 8pt; margin: 0.4em 0; }
+.acknowledgment { font-size: 8.5pt; margin: 0.4em 0; }
 .acknowledgment p { text-indent: 0 !important; margin: 0.15em 0; }
-.footnotes { font-size: 7pt; margin: 0.2em 0; }
+.footnotes { font-size: 8.5pt; margin: 0.2em 0; }
 .fn-p { text-indent: 0 !important; margin: 0.1em 0; }
-.bio { font-size: 7.5pt; margin: 0.4em 0; }
-.notes { font-size: 7pt; margin: 0.2em 0; }
+.bio { font-size: 8.5pt; margin: 0.4em 0; }
+.notes { font-size: 8.5pt; margin: 0.2em 0; }
 
 /* ─── Sup/Sub ──────────────────────────────────────────────────── */
 sup { font-size: 0.75em; vertical-align: baseline; position: relative; top: -0.3em; line-height: 0; }
 sub { font-size: 0.7em; vertical-align: baseline; position: relative; bottom: -0.3em; line-height: 0; }
 
-/* ─── Links ────────────────────────────────────────────────────── */
+/* ─── Links and xref citations ──────────────────────────────────── */
 a { color: #003399; text-decoration: none; }
-a.xref-link sup { position: relative; vertical-align: baseline; font-size: 0.85em; line-height: 0; top: -0.06em; }
+a.xref-link { color: #003399; }
+a.xref-link sup {
+    vertical-align: baseline;
+    font-size: 0.9em;
+    line-height: 1;
+    position: static;
+    top: auto;
+}
 
 /* ─── Break control ────────────────────────────────────────────── */
 h2, h3, h4, h5, h6 { break-after: avoid; }

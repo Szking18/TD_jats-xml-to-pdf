@@ -247,6 +247,22 @@ def _render_figure(fig):
     return Markup('\n'.join(parts))
 
 
+def _strip_outer_p(html):
+    """递归去除所有外层 <p> 标签。例如 '<p><p><b>Title</b>.</p></p>' → '<b>Title</b>.'"""
+    import re
+    prev = None
+    while prev != html:
+        prev = html
+        html = html.strip()
+        if html.startswith('<p>') and html.endswith('</p>'):
+            html = html[3:-4].strip()
+        else:
+            m = re.match(r'^<p[^>]*>(.*)</p>$', html, re.DOTALL)
+            if m:
+                html = m.group(1).strip()
+    return html
+
+
 def _render_table(tbl):
     tbl_id = tbl.get('id', '')
     if tbl_id:
@@ -254,10 +270,15 @@ def _render_table(tbl):
     else:
         parts = ['<div class="table-wrap">']
     label = tbl.get('label', [])
-    parts.append(f'<p class="table-label">{_render_inline_list(label) if isinstance(label, list) else _escape(str(label))}</p>')
+    label_html = _render_inline_list(label) if isinstance(label, list) else _escape(str(label))
     caption = tbl.get('caption', [])
     if caption:
-        parts.append(f'<p class="table-caption">{_render_inline_list(caption) if isinstance(caption, list) else _escape(str(caption))}</p>')
+        cap_html = _render_inline_list(caption) if isinstance(caption, list) else _escape(str(caption))
+        # Strip outer <p> wrapper so label + caption flow as one paragraph
+        cap_html = _strip_outer_p(cap_html)
+        parts.append(f'<p class="table-title"><b>{label_html}</b> {cap_html}</p>')
+    else:
+        parts.append(f'<p class="table-title"><b>{label_html}</b></p>')
     parts.append('<table>')
     headers = tbl.get('headers', [])
     if headers:

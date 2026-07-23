@@ -79,26 +79,35 @@ def _build_journal_logo(journal_id):
 
 
 def _render_first_page_note(doc_data):
-    notes = []
     front = doc_data.get('front', {})
-    if front.get('copyright'):
-        notes.append(_escape(front.get('copyright')).strip())
-    if front.get('license'):
-        notes.append(str(_render_inline_list(front.get('license'))).strip())
+    copyright_text = _escape(front.get('copyright', '')).strip()
+    license_text = str(_render_inline_list(front.get('license', []))).strip()
+    # footnotes
+    fn_lines = []
     for item in doc_data.get('back', []):
         if item.get('type') == 'footnotes':
             for fn in item.get('footnotes', []):
                 for p in fn.get('content', []):
-                    text = str(_render_inline_list(p)).strip()
-                    # 清理 XML 中的多余空白字符（换行、tab等）
                     import re
-                    text = re.sub(r'\s+', ' ', text)
-                    notes.append(text)
-    if not notes:
+                    text = re.sub(r'\s+', ' ', str(_render_inline_list(p)).strip())
+                    fn_lines.append(text)
+    if not copyright_text and not license_text and not fn_lines:
         return ''
     # CC BY license badge for open-access articles
     badge_html = _build_license_badge(doc_data)
-    return '<div id="first-footer">' + badge_html + '<br>'.join(notes) + '</div>'
+    # 将 copyright 和 license 文字放在 badge 图片右边
+    text_lines = []
+    if copyright_text:
+        text_lines.append(copyright_text)
+    if license_text:
+        text_lines.append(license_text)
+    text_block = '<br>'.join(text_lines) if text_lines else ''
+    badge_line = ''
+    if badge_html:
+        badge_line = '<div class="license-row">' + badge_html + '<span class="license-texts">' + text_block + '</span></div>'
+    parts = [badge_line] if badge_line else []
+    parts.extend(fn_lines)
+    return '<div id="first-footer">' + '<br>'.join(parts) + '</div>'
 
 
 def _build_license_badge(doc_data):

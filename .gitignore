@@ -1,0 +1,9 @@
+__pycache__/
+.venv/
+node_modules/
+.mathml_cache/
+.vscode/
+*.pdf
+*_debug.html
+tmp_*
+.DS_Store

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ title_text | e }}</title>
+<style>{{ css }}</style>
+</head>
+<body>
+
+{# ─── First page footer note (running element, must be BEFORE first page content) ─── #}
+{{ first_page_note }}
+
+{# ─── Publisher Logo (CSS running element for footer) ─── #}
+{{ publisher_logo }}
+
+{# ─── FRONT MATTER ─── #}
+<header class="article-front">
+
+  <div class="journal-header">
+    {{ journal_logo }}
+    <div class="journal-header-text">
+      <p class="journal-citation">
+        {{ citation_line }}
+        {% if front.doi %}
+        <br><span class="doi">https://doi.org/{{ front.doi }}</span>
+        {% endif %}
+      </p>
+      {% if front.article_type_label %}
+      <p class="article-type">{{ front.article_type_label | upper }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <h1 class="article-title">{{ render_inline_list(front.title) }}</h1>
+
+  <div class="authors">
+    {% for author in front.authors %}
+    <span class="author">{{ author.name }}{% if author.orcid %}<sup class="sup-orcid"><a href="{{ author.orcid }}">iD</a></sup>{% endif %}{% for xref in author.xrefs %}{{ render_inline_list(xref.content) }}{% endfor %}</span>{% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="affiliations">
+    {% for aff in front.affiliations %}
+    <p class="aff"><sup>{{ aff.label }}</sup>{{ aff.text }}</p>
+    {% endfor %}
+  </div>
+
+  {% if front.correspondence %}
+  <div class="correspondence">
+    {% for corr in front.correspondence %}
+    <p><sup>*</sup>Correspondence: {% for email in corr.emails %}<a href="mailto:{{ email }}">{{ email }}</a>{% if not loop.last %}; {% endif %}{% endfor %}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if front.author_footnotes %}
+  <div class="author-footnotes">
+    {% for fn in front.author_footnotes %}<p>{{ render_inline_list(fn) }}</p>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% if front.editors %}
+  <div class="editors">
+    <p>Academic Editor{% if front.editors|length > 1 %}s{% endif %}: {% for ed in front.editors %}{{ ed.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+  </div>
+  {% endif %}
+
+  {% set history = get_history() %}
+  {% if history %}
+  <div class="history">
+    <p>{{ history }}</p>
+  </div>
+  {% endif %}
+
+  {% if front.abstract %}
+  <div class="abstract">
+    <h2>Abstract</h2>
+    {% for sec in front.abstract %}
+      {% if sec.title %}<p><strong>{{ sec.title }}</strong></p>{% endif %}
+      {% for para in sec.paragraphs %}<p>{{ render_inline_list(para) }}</p>{% endfor %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if front.keywords %}
+  <div class="keywords">
+    <p><strong>Keywords: </strong>{% for kw in front.keywords %}{{ kw }}{% if not loop.last %}; {% endif %}{% endfor %}</p>
+  </div>
+  {% endif %}
+
+</header>
+
+{# ─── BODY ─── #}
+<div class="article-body">
+  <div class="col-span-anchor"></div>
+  {% for item in body %}{{ render_body_item(item) }}{% endfor %}
+</div>
+
+{# ─── BACK ─── #}
+<div class="article-back">
+  {% for item in back %}{{ render_back_item(item) }}{% endfor %}
+</div>
+
+</body>
+</html>
